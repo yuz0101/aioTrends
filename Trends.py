@@ -126,8 +126,8 @@ class WidgetsPool(Settings):
         tasks = []
         for tid in queryKeys:
             query = queries[tid]
-            keywords = query['tickers']
-            timeframe = str(query['periods'][0].date()) + ' ' + str(query['periods'][1].date())
+            keywords = query['keywords'] #tickers
+            timeframe = query['periods'] #str(query['periods'][0].date()) + ' ' + str(query['periods'][1].date())
             if '2003' not in timeframe:
                 cookies = readCookies(self.pathCookies)
                 proxy = proxies[random.randint(0, len(proxies)-1)]

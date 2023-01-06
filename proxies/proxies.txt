@@ -1,0 +1,3 @@
+proxyIPaddress1:port:username:password
+proxyIPaddress2:port:username:password
+proxyIPaddress3:port:username:password
