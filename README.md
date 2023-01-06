@@ -10,9 +10,12 @@ Only data of interest over time is tested and avaiable now.
 
 ## Setting
 
-Settings can be customized inside the `Settings` Class. 
+Settings can be customized inside the `Settings` Class.
+
 An example input of queries is given under the data folder.
-An example of proxies file is given under the proxies folder
+
+An example of proxies file is given under the proxies folder.
+
 The file userAgents.json is from [Said-Ait-Driss](https://github.com/Said-Ait-Driss/user-agents).
 
 ## Start to fetch the timeseries data of your keywords
