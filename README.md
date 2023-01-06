@@ -27,9 +27,7 @@ import aioTrends as at
 #Step 0: Setup the queries file and the log file. Other settings can be customized by amending the init inside the Settings class
 queries = {
     'keywords': ['AAPL'],
-    'periods': [
-        '2007-01-01 2007-08-31'
-    ]
+    'periods': '2007-01-01 2007-08-31'
 }
 pickle.dump(open('./data/queries.pkl', 'wb'))
 at.setLog('./data/hello.log') #Setp 0: set log file path
