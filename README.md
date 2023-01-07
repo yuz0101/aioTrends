@@ -8,6 +8,15 @@ The logic behind this project is to firstly build a cookies pool, then obtain an
 
 Only data of interest over time is tested and avaiable now.
 
+### Pros
+
+- **Saving time** ~ By employing the asynchronous framework of aiohttp, the programme will deal with other requests while waiting for responses from Google Trends, saving the waiting time.
+* **Saving repeated requests** ~ Suffering from broken connections and being tired of restarting the requests process? This programme separates the whole process into (1) building a cookies pool, (2) building a widgets pool and (3) retrieving data. The programme can be started from either sub-stage, avoiding sending repeated requests.
++ **Unlimited tasks amount** ~ Tons of queries? The programme will handle that for you automatically.
+
+### Cons
+
+- **Heavily relying on proxies** ~ When running on a large amount of queries, proxies would be required for successfully catching responses. In this context, a small amount of rotating proxies or a large amount of static proxies would be required.
 ### Setting
 
 Settings can be customized inside the `Settings` Class.
@@ -18,7 +27,9 @@ An example of proxies file is given under the proxies folder.
 
 The file userAgents.json is from [Said-Ait-Driss](https://github.com/Said-Ait-Driss/user-agents).
 
-### Start to fetch the timeseries data of your keywords
+### Getting started
+
+#### Fetch the timeseries data of your keywords
 
 ```python
 import pickle
