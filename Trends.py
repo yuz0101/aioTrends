@@ -89,15 +89,23 @@ class CookiesPool(Settings):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(asyncio.wait(tasks))
     
-    def run(self, cookiesQueries: int, timeout=TIMEOUT):
-        userAgents = json.load(open(self.pathUserAgents, 'r'))
-        proxies = readProxies(self.pathProxies)
+    def cookiesRecord(self):
         try:
             self.cookiesNumb = len(pickle.load(open(self.pathCookies, 'rb')))
         except:
             self.cookiesNumb  = 0
-        for i in range(int(cookiesQueries/self.asyncNumb)):
-            self.asyncGetCookies(userAgents, proxies, timeout)
+
+    def run(self, cookiesQueries: int, timeout=TIMEOUT):
+        userAgents = json.load(open(self.pathUserAgents, 'r'))
+        proxies = readProxies(self.pathProxies)
+        self.cookiesRecord()
+        cookiesQueries = cookiesQueries - self.cookiesNumb
+        while cookiesQueries != 0:
+            for i in range(int(cookiesQueries/self.asyncNumb)):
+                self.asyncGetCookies(userAgents, proxies, timeout)
+            self.cookiesRecord()
+            cookiesQueries = cookiesQueries - self.cookiesNumb
+            
     
 class WidgetsPool(Settings):
 
@@ -124,10 +132,10 @@ class WidgetsPool(Settings):
         except Exception as e:
             logging.error(f'[Widget Pool][TID:{tid}][Remained:{self.widgetQueryAmount}][Unknown Error] {e}')
 
-    def asyncGetWidget(self, queryKeys, queries, proxies, userAgents, timeout):
+    def asyncGetWidget(self, queryKeys, proxies, userAgents, timeout):
         tasks = []
         for tid in queryKeys:
-            query = queries[tid]
+            query = self.queries[tid]
             keywords = query['keywords'] #tickers
             timeframe = query['periods'] #str(query['periods'][0].date()) + ' ' + str(query['periods'][1].date())
             if '2003' not in timeframe:
@@ -138,11 +146,8 @@ class WidgetsPool(Settings):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(asyncio.wait(tasks))
 
-    def run(self, timeout=TIMEOUT):
-        proxies = readProxies(self.pathProxies)
-        userAgents = json.load(open(self.pathUserAgents, 'r'))
-        queries = pickle.load(open(self.pathQueries, 'rb'))
-        skeys = list(queries.keys())
+    def filterQueries(self):
+        skeys = list(self.queries.keys())
         try:
             dkeys = pickle.load(open(self.pathWidget, 'rb'))
             skeys = list(set(skeys)-set(dkeys))
@@ -153,15 +158,26 @@ class WidgetsPool(Settings):
             skeys = list(set(skeys)-set(dkeys))
         except:
             pass
-        random.shuffle(skeys)
+        return skeys
+
+    def run(self, timeout=TIMEOUT):
+        proxies = readProxies(self.pathProxies)
+        userAgents = json.load(open(self.pathUserAgents, 'r'))
+        self.queries = pickle.load(open(self.pathQueries, 'rb'))
+        skeys = self.filterQueries()
         self.widgetQueryAmount = len(skeys)
-        seqs = int(self.widgetQueryAmount/self.asyncNumb)
-        if self.widgetQueryAmount > self.asyncNumb:
-            querykeyss = np.array_split(list(skeys), seqs)
-        else:
-            querykeyss = [skeys]
-        for queryKeys in querykeyss:
-            self.asyncGetWidget(queryKeys, queries, proxies, userAgents, timeout)
+        random.shuffle(skeys)
+        while self.widgetQueryAmount > 0:
+            seqs = int(self.widgetQueryAmount/self.asyncNumb)
+            if self.widgetQueryAmount > self.asyncNumb:
+                querykeyss = np.array_split(list(skeys), seqs)
+            else:
+                querykeyss = [skeys]
+            for queryKeys in querykeyss:
+                self.asyncGetWidget(queryKeys, proxies, userAgents, timeout)
+            skeys = self.filterQueries()
+            self.widgetQueryAmount = len(skeys)
+            random.shuffle(skeys)
 
 class DataInterestOverTime(Settings):
     def __init__(self, asyncNumb: int):
@@ -195,10 +211,10 @@ class DataInterestOverTime(Settings):
         except Exception as e:
             logging.error(f'[Data][TID:{tid}][Remained:{self.queryDataAmount}][Unknown Error] {e}')
 
-    def asyncGetData(self, querykeys, widgets, userAgents, proxies, timeout):
+    def asyncGetData(self, querykeys, userAgents, proxies, timeout):
         tasks = []
         for tid in querykeys:
-            widget = widgets[tid]
+            widget = self.widgets[tid]
             userAgent = userAgents[random.randint(0, len(userAgents)-1)]
             proxy = proxies[random.randint(0, len(proxies)-1)]
             cookies =readCookies(self.pathCookies)
@@ -206,11 +222,8 @@ class DataInterestOverTime(Settings):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(asyncio.wait(tasks))
 
-    def run(self, timeout=TIMEOUT):
-        userAgents = json.load(open(self.pathUserAgents, 'r'))
-        widgets = pickle.load(open(self.pathWidget, 'rb'))
-        proxies = readProxies(self.pathProxies)
-        skeys = list(widgets.keys())
+    def filterWidgets(self):
+        skeys = list(self.widgets.keys())
         try:
             # load & filter the finished tasks
             dkeys = pickle.load(open(self.pathDataInterstOverTime , 'rb'))
@@ -223,12 +236,23 @@ class DataInterestOverTime(Settings):
             skeys = list(set(skeys)-set(dkeys))
         except:
             pass
-        random.shuffle(skeys)
+        return skeys
+
+    def run(self, timeout=TIMEOUT):
+        userAgents = json.load(open(self.pathUserAgents, 'r'))
+        proxies = readProxies(self.pathProxies)
+        self.widgets = pickle.load(open(self.pathWidget, 'rb'))
+        skeys = self.filterWidgets()
         self.queryDataAmount = len(skeys)
-        if self.queryDataAmount > self.asyncNumb:
-            seqs = int(self.queryDataAmount/self.asyncNumb)
-            querykeyss = np.array_split(list(skeys), seqs)
-        else:
-            querykeyss = [skeys]
-        for querykeys in querykeyss:
-            self.asyncGetData(querykeys, widgets, userAgents, proxies, timeout)
+        random.shuffle(skeys)
+        while self.queryDataAmount > 0:
+            if self.queryDataAmount > self.asyncNumb:
+                seqs = int(self.queryDataAmount/self.asyncNumb)
+                querykeyss = np.array_split(list(skeys), seqs)
+            else:
+                querykeyss = [skeys]
+            for querykeys in querykeyss:
+                self.asyncGetData(querykeys, userAgents, proxies, timeout)
+            skeys = self.filterWidgets()
+            self.queryDataAmount = len(skeys)
+            random.shuffle(skeys)
