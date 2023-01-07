@@ -68,7 +68,7 @@ class CookiesPool(Settings):
             async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
                 session.headers.update({'accept-language': self.hl, 'user-agent': userAgent})
                 async with session.get(
-                    f'https://trends.google.com/?geo={self.geo}', proxy=proxy, timeout=timeout
+                    f'https://trends.google.com/?geo={self.geo}', timeout=timeout, proxy=proxy
                     ) as res:
                     if await self.status('[Cookies Pool]', res):
                         cookies = dict(filter(lambda i: i[0]=='NID', res.cookies.items()))
@@ -92,7 +92,10 @@ class CookiesPool(Settings):
     def run(self, cookiesQueries: int, timeout=TIMEOUT):
         userAgents = json.load(open(self.pathUserAgents, 'r'))
         proxies = readProxies(self.pathProxies)
-        self.cookiesNumb = len(pickle.load(open(self.pathCookies, 'rb')))
+        try:
+            self.cookiesNumb = len(pickle.load(open(self.pathCookies, 'rb')))
+        except:
+            self.cookiesNumb  = 0
         for i in range(int(cookiesQueries/self.asyncNumb)):
             self.asyncGetCookies(userAgents, proxies, timeout)
     
@@ -117,8 +120,7 @@ class WidgetsPool(Settings):
                         storeDict(self.pathWidget, {tid: widget})
                         self.widgetQueryAmount -= 1
                         logging.critical(f'[Widget Pool][TID:{tid}][Remained:{self.widgetQueryAmount}] Stored')
-                    else:
-                        logging.error(f'[Widget Pool][TID:{tid}][Remained:{self.widgetQueryAmount}] Failed')
+                    
         except Exception as e:
             logging.error(f'[Widget Pool][TID:{tid}][Remained:{self.widgetQueryAmount}][Unknown Error] {e}')
 
@@ -176,7 +178,7 @@ class DataInterestOverTime(Settings):
             async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
                 session.headers.update({'accept-language': self.hl, 'user-agent': userAgent})
                 async with session.get(
-                    self.urls['multiline'], params=queryPayload, timeout=timeout, proxy=proxy
+                    self.urls['multiline'], params=queryPayload, timeout=timeout, proxy=proxy, cookies=cookies
                 ) as res:
                     if await self.status(f'[Data][TID:{tid}][Remained:{self.queryDataAmount}]', res):
                         res = await res.text()
