@@ -2,7 +2,7 @@
 
 ### Intro.
 
-This is a project for asynchronously obtaining data from google trends in an efficient way. Inspired by [pytrends](https://github.com/GeneralMills/pytrends), I am developing this project with a asynchronous framework, [aiohttp](https://github.com/aio-libs/aiohttp).
+This is a project for asynchronously obtaining data from google trends in an efficient way. Inspired by [pytrends](https://github.com/GeneralMills/pytrends), I am developing this project based on a asynchronous framework, asyncio, and a related module, [aiohttp](https://github.com/aio-libs/aiohttp).
 
 The logic behind this project is to firstly build a cookies pool, then obtain and store the tokenized queries (wrapped inside the widgets) in another pool, and lastly retreive the data with widgets from the widget pool.s
 
@@ -10,7 +10,7 @@ Only data of interest over time is tested and avaiable now.
 
 ### Pros
 
-- **Saving time** ~ By employing the asynchronous framework of aiohttp, the programme will deal with other requests while waiting for responses from Google Trends, saving the waiting time.
+- **Saving time** ~ By employing the asynchronous framework, the programme will deal with other requests while waiting for responses from Google Trends, saving the waiting time.
 * **Saving repeated requests** ~ Suffering from broken connections and being tired of restarting the requests process? This programme separates the whole process into (1) building a cookies pool, (2) building a widgets pool and (3) retrieving data. The programme can be started from either sub-stage, avoiding sending repeated requests.
 + **Unlimited tasks amount** ~ Tons of queries? The programme will handle that for you automatically.
 
