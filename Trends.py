@@ -107,7 +107,7 @@ class CookiesPool(Settings):
             logging.error(f'[Cookies Pool][Amount:{self.cookiesNumb}][Unknown Error] {repr(e)}')
     
     async def loopGetCookies(self, userAgent, proxy, timeout):
-        while self.cookiesQueries > self.cookiesNumb:
+        while self.cookiesQrys > self.cookiesNumb:
             await self.getCookies(userAgent, proxy, timeout)
 
     async def asyncGetCookies(self, timeout: int):
@@ -118,16 +118,16 @@ class CookiesPool(Settings):
             tasks.append(self.loopGetCookies(userAgent, proxy, timeout))
         await asyncio.gather(*tasks)
 
-    def run(self, cookiesQueries: int, timeout=TIMEOUT):
+    def run(self, cookiesQrys: int, timeout=TIMEOUT):
         self.userAgents = readJson(self.pathUserAgents)
         self.proxies = readProxies(self.pathProxies)
         if os.path.exists(self.pathCookies):
             self.cookiesNumb = len(loadDict(self.pathCookies))
         else:
             self.cookiesNumb = 0
-        self.cookiesQueries = cookiesQueries# - self.cookiesNumb
-        if self.cookiesQueries < self.asyncNumb:
-            self.asyncNumb = self.cookiesQueries
+        self.cookiesQrys = cookiesQrys# - self.cookiesNumb
+        if self.cookiesQrys < self.asyncNumb:
+            self.asyncNumb = self.cookiesQrys
         asyncio.run(self.asyncGetCookies(timeout))
             
 class WidgetsPool(Settings):
@@ -137,77 +137,77 @@ class WidgetsPool(Settings):
         self.asyncNumb = asyncNumb
     
     async def widgetInterestOverTime(self, tid, cookies, proxy, userAgent, timeout):
-        tokenPayload = {
+        payload = {
             'hl': self.hl, 
             'tz': self.tz, 
             'req': {
                 'comparisonItem': [
-                    {'keyword': kw, 'time': self.queries[tid]['periods'], 'geo': self.geo} for kw in self.queries[tid]['keywords']
-                    ], 
-                'category': self.cat, 
+                    {'keyword': kw, 'time': self.qrys[tid]['periods'], 'geo': self.geo} for kw in self.qrys[tid]['keywords']
+                    ],
+                'category': self.cat,
                 'property': self.gprop
                 }
             }
-        tokenPayload['req'] = json.dumps(tokenPayload['req'])
+        payload['req'] = json.dumps(payload['req'])
         try:
             async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
                 session.headers.update({'accept-language': self.hl, 'user-agent': userAgent})
                 async with session.get(
-                    self.urls['token'], params=tokenPayload, cookies=cookies, proxy=proxy#, timeout=timeout
+                    self.urls['token'], params=payload, cookies=cookies, proxy=proxy#, timeout=timeout
                     ) as res:
-                    if await self.status(f'[Widget Pool][TID:{tid}][Remained Widgets:{self.widgetQueryAmount}]', res):
+                    if await self.status(f'[Widget Pool][TID:{tid}][Remained Widgets:{self.wgtQryN}]', res):
                         res = await res.text()
                         res = json.loads(res[4:])
                         widgets = res['widgets']
                         widget = list(filter(lambda w: w['id']=='TIMESERIES', widgets))[0]
-                        await updateDict(self.pathWidget, {tid: widget})
-                        self.widgetQueryAmount -= 1
-                        logging.critical(f'[Widget Pool][TID:{tid}][Remained:{self.widgetQueryAmount}] Stored')
+                        await updateDict(self.pathWgt, {tid: widget})
+                        self.wgtQryN -= 1
+                        logging.critical(f'[Widget Pool][TID:{tid}][Remained:{self.wgtQryN}] Stored')
         except Exception as e:
-            logging.error(f'[Widget Pool][TID:{tid}][Remained:{self.widgetQueryAmount}][Unknown Error] {repr(e)}')
+            logging.error(f'[Widget Pool][TID:{tid}][Remained:{self.wgtQryN}][Unknown Error] {repr(e)}')
 
-    async def loopWidgets(self, queryKeys, timeout):
-        for tid in queryKeys:
+    async def loopWidgets(self, qryks, timeout):
+        for tid in qryks:
             cookies = readCookies(self.pathCookies)
             proxy = self.proxies[random.randint(0, len(self.proxies)-1)]
             userAgent = self.userAgents[random.randint(0, len(self.userAgents)-1)]
             await self.widgetInterestOverTime(tid, cookies, proxy, userAgent, timeout)
     
-    async def asyncGetWidget(self, querykeyss, timeout):
+    async def asyncGetWidget(self, qrykss, timeout):
         tasks = []
-        for queryKeys in querykeyss:
-            tasks.append(self.loopWidgets(queryKeys, timeout))
+        for qryks in qrykss:
+            tasks.append(self.loopWidgets(qryks, timeout))
         await asyncio.gather(*tasks)
 
-    def filterQueries(self):
-        skeys = list(self.queries.keys())
+    def filterQrys(self):
+        k = list(self.qrys.keys())
         try:
-            dkeys = loadDict(self.pathWidget)
-            skeys = list(set(skeys)-set(dkeys))
+            dkeys = loadDict(self.pathWgt)
+            k = list(set(k)-set(dkeys))
         except:
             pass
         try:
-            dkeys = loadDict(self.pathWidgetReceiveEmptyReponse)
-            skeys = list(set(skeys)-set(dkeys))
+            dkeys = loadDict(self.pathWgtEptyRes)
+            k = list(set(k)-set(dkeys))
         except:
             pass
-        return skeys
+        return k
 
     def run(self, timeout=TIMEOUT):
         self.proxies = readProxies(self.pathProxies)
         self.userAgents = readJson(self.pathUserAgents)
-        self.queries = loadDict(self.pathQueries)
-        skeys = self.filterQueries()
-        self.widgetQueryAmount = len(skeys)
-        random.shuffle(skeys)
-        while self.widgetQueryAmount > 0:
-            if self.widgetQueryAmount < self.asyncNumb:
-                self.asyncNumb = self.widgetQueryAmount
-            querykeyss = np.array_split(list(skeys), self.asyncNumb)
-            asyncio.run(self.asyncGetWidget(querykeyss, timeout))
-            skeys = self.filterQueries()
-            self.widgetQueryAmount = len(skeys)
-            random.shuffle(skeys)
+        self.qrys = loadDict(self.pathQrys)
+        k = self.filterQrys()
+        self.wgtQryN = len(k)
+        random.shuffle(k)
+        while self.wgtQryN > 0:
+            if self.wgtQryN < self.asyncNumb:
+                self.asyncNumb = self.wgtQryN
+            qrykss = np.array_split(list(k), self.asyncNumb)
+            asyncio.run(self.asyncGetWidget(qrykss, timeout))
+            k = self.filterQrys()
+            self.wgtQryN = len(k)
+            random.shuffle(k)
 
 class DataInterestOverTime(Settings):
     def __init__(self, asyncNumb: int):
@@ -215,7 +215,7 @@ class DataInterestOverTime(Settings):
         self.asyncNumb = asyncNumb
 
     async def getData(self, tid, userAgent: str, proxy: str, cookies: dict, timeout: int):
-        queryPayload = {
+        payload = {
             'req': json.dumps(self.widgets[tid]['request']),
             'token': self.widgets[tid]['token'],
             'tz': self.tz
@@ -224,64 +224,63 @@ class DataInterestOverTime(Settings):
             async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
                 session.headers.update({'accept-language': self.hl, 'user-agent': userAgent})
                 async with session.get(
-                    self.urls['multiline'], params=queryPayload, proxy=proxy#, cookies=cookies, timeout=timeout
+                    self.urls['multiline'], params=payload, proxy=proxy#, cookies=cookies, timeout=timeout
                 ) as res:
-                    if await self.status(f'[Data][Remained:{self.queryDataAmount}][TID:{tid}]', res):
+                    if await self.status(f'[Data][Remained:{self.qryN}][TID:{tid}]', res):
                         res = await res.text()
                         res = json.loads(res[5:])['default']['timelineData']
-                        self.queryDataAmount -= 1 
-                        await popDict(self.pathWidget, tid)
-                        #key = widget['request']['comparisonItem'][0]['complexKeywordsRestriction']['keyword'][0]['value']
+                        self.qryN -= 1 
+                        await popDict(self.pathWgt, tid)
                         if len(res) > 0:
-                            await updateDict(self.pathDataInterstOverTime, {int(tid): res})
-                            logging.critical(f'[Data][Remained:{self.queryDataAmount}][TID:{tid}] Stored **')
+                            await updateDict(self.pathDataIOT, {int(tid): res})
+                            logging.critical(f'[Data][Remained:{self.qryN}][TID:{tid}] Stored **')
                         else:
-                            await updateDict(self.pathWidgetReceiveEmptyReponse, {int(tid): self.widgets[tid]})
-                            logging.error(f'[Data][Remained:{self.queryDataAmount}][TID:{tid}] Empty Set')
+                            await updateDict(self.pathWgtEptyRes, {int(tid): self.widgets[tid]})
+                            logging.error(f'[Data][Remained:{self.qryN}][TID:{tid}] Empty Set')
         except Exception as e:
-            logging.error(f'[Data][Remained:{self.queryDataAmount}][TID:{tid}][Unknown Error] {repr(e)}')
+            logging.error(f'[Data][Remained:{self.qryN}][TID:{tid}][Unknown Error] {repr(e)}')
 
-    async def loopGetData(self, querykeys, timeout):
-        for tid in querykeys:
+    async def loopGetData(self, qryks, timeout):
+        for tid in qryks:
             userAgent = self.userAgents[random.randint(0, len(self.userAgents)-1)]
             proxy = self.proxies[random.randint(0, len(self.proxies)-1)]
             cookies = readCookies(self.pathCookies)
             await self.getData(tid, userAgent, proxy, cookies, timeout)
 
-    async def asyncGetData(self, querykeyss, timeout):
+    async def asyncGetData(self, qrykss, timeout):
         tasks = []
-        for querykeys in querykeyss:
-            tasks.append(self.loopGetData(querykeys, timeout))
+        for qryks in qrykss:
+            tasks.append(self.loopGetData(qryks, timeout))
         await asyncio.gather(*tasks)
 
     def filterWidgets(self):
-        skeys = list(self.widgets.keys())
+        k = list(self.widgets.keys())
         try:
             # load & filter the finished tasks
-            dkeys = loadDict(self.pathDataInterstOverTime)
-            skeys = list(set(skeys)-set(dkeys))
+            dkeys = loadDict(self.pathDataIOT)
+            k = list(set(k)-set(dkeys))
         except:
             pass
         try:
             # load & filter the tasks with empty responses from gooogle. There is not enough searching data for google to form a SVI.
-            dkeys = loadDict(self.pathWidgetReceiveEmptyReponse)
-            skeys = list(set(skeys)-set(dkeys))
+            dkeys = loadDict(self.pathWgtEptyRes)
+            k = list(set(k)-set(dkeys))
         except:
             pass
-        return skeys
+        return k
 
     def run(self, timeout=TIMEOUT):
         self.userAgents = readJson(self.pathUserAgents)
         self.proxies = readProxies(self.pathProxies)
-        self.widgets = loadDict(self.pathWidget)
-        skeys = self.filterWidgets()
-        self.queryDataAmount = len(skeys)
-        random.shuffle(skeys)
-        while self.queryDataAmount > 0:
-            if self.queryDataAmount < self.asyncNumb:
-                self.asyncNumb = self.queryDataAmount
-            querykeyss = np.array_split(list(skeys), self.asyncNumb)
-            asyncio.run(self.asyncGetData(querykeyss, timeout))
-            skeys = self.filterWidgets()
-            self.queryDataAmount = len(skeys)
-            random.shuffle(skeys)
+        self.widgets = loadDict(self.pathWgt)
+        k = self.filterWidgets()
+        self.qryN = len(k)
+        random.shuffle(k)
+        while self.qryN > 0:
+            if self.qryN < self.asyncNumb:
+                self.asyncNumb = self.qryN
+            qrykss = np.array_split(list(k), self.asyncNumb)
+            asyncio.run(self.asyncGetData(qrykss, timeout))
+            k = self.filterWidgets()
+            self.qryN = len(k)
+            random.shuffle(k)

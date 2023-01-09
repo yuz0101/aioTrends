@@ -14,11 +14,11 @@ class Settings:
         self.gprop = ''
         self.pathUserAgents = './settings/userAgents.json'
         self.pathProxies = './proxies/proxies.txt'
-        self.pathQueries = './data/queries.pkl'
+        self.pathQrys = './data/queries.pkl'
         self.pathCookies = './data/cookies.pkl'
-        self.pathWidget = './data/widget.pkl'
-        self.pathDataInterstOverTime = './data/dataInterestOverTime.pkl'
-        self.pathWidgetReceiveEmptyReponse = './data/widgetReceiveEmptyReponse.pkl'
+        self.pathWgt = './data/widget.pkl'
+        self.pathDataIOT = './data/dataInterestOverTime.pkl'
+        self.pathWgtEptyRes = './data/widgetReceiveEmptyReponse.pkl'
         self.urls = {
             'token': 'https://trends.google.com/trends/api/explore',
             'multiline': 'https://trends.google.com/trends/api/widgetdata/multiline'} #'comparedgeo': 'https://trends.google.com/trends/api/widgetdata/comparedgeo', #'relatedsearches': 'https://trends.google.com/trends/api/widgetdata/relatedsearches', #'trending': 'https://trends.google.com/trends/hottrends/visualize/internal/data'
