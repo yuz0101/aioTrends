@@ -237,7 +237,7 @@ class WidgetsPool(Settings):
             for task in tasks:
                 task.cancel()
             await asyncio.gather(*tasks, return_exceptions=True)
-            k = await self.filterWidgets()
+            k = await self.filterQrys()
             self.wgtQryN = len(k)
             random.shuffle(k)
 
