@@ -137,7 +137,6 @@ class CookiesPool(Settings):
         while self.cookiesQrys > 0:
             if self.cookiesQrys < self.workerAmount:
                 self.workerAmount = self.cookiesQrys
-            #queue = asyncio.Queue()
             for cid in range(self.cookiesQrys):
                 self.queueCookies.put_nowait(cid)
             tasks = []

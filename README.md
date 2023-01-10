@@ -50,12 +50,12 @@ queries = {
 pickle.dump(open('./data/queries.pkl', 'wb'))
 at.setLog('./data/hello.log') #Setp 0: set log file path
 
-#Step 1: collect 10 cookies with two async. threads. Threads can be customized.
-at.CookeisPool(2).run(10)
+#Step 1: collect 1000 cookies with 100 cocurrent tasks. Cocurrent tasks amount can be customized.
+at.CookeisPool(100).run(1000)
 
-#Step 2: get widgets with three async. threads. Threads can be customized.
-at.WidgetsPool(3).run()
+#Step 2: get widgets with 200 cocurrent tasks. Cocurrent tasks can be customized.
+at.WidgetsPool(200).run()
 
-#Step 3: get data with five async. threads. Threads can be customized.
-at.DataInterestOverTime(5).run() 
+#Step 3: get data with 100 cocurrent tasks. Cocurrent tasks can be customized.
+at.DataInterestOverTime(100).run() 
 ```
