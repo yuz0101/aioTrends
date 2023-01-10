@@ -16,7 +16,7 @@ Only data of interest over time is tested and avaiable now.
 
 ### Cons
 - **Heavily relying on proxies** ~ When running on a large amount of queries, proxies would be required for successfully catching responses. In this context, a small amount of rotating proxies or a large amount of static proxies would be required.
-+ **Only timeseries interest data is avaiable now** Will test others in the future.
++ **Only timeseries interest data is avaiable now** ~ Will test others in the future.
 
 ## Requirements
 - python >= 3.10
