@@ -267,7 +267,7 @@ class DataInterestOverTime(Settings):
             proxy (str): A proxy in a format of f"http://{username}:{password}@{ip}:{port}" or f"http://{ip}:{port}".
             cookies (dict): Cookies requested from google.
             timeout (int): A timeout setting for aiohttp.ClientTimeout.
-        """      
+        """
         payload = {
             'req': json.dumps(self.widgets[tid]['request']),
             'token': self.widgets[tid]['token'],
@@ -285,7 +285,8 @@ class DataInterestOverTime(Settings):
                         self.qryN -= 1 
                         await popDict(self.pathWgt, tid)
                         if len(res) > 0:
-                            await updateDict(self.pathDataIOT, {int(tid): res})
+                            #await updateDict(self.pathDataIOT, {int(tid): res})
+                            await pkl(f'{self.pathDataIOT}{tid}.pkl', res)
                             logging.critical(f'|{i}|Data|Remained:{self.qryN}|TID:{tid}| Stored **')
                         else:
                             await updateDict(self.pathWgtEptyRes, {int(tid): self.widgets[tid]})
@@ -311,7 +312,8 @@ class DataInterestOverTime(Settings):
         """
         k = list(self.widgets.keys())
         try:
-            dkeys = await unpkl(self.pathDataIOT)
+            #dkeys = await unpkl(self.pathDataIOT)
+            dkeys = self.readDatakeys(self.pathDataIOT)
             k = list(set(k)-set(dkeys))
         except:
             pass
@@ -321,7 +323,14 @@ class DataInterestOverTime(Settings):
         except:
             pass
         return k
-
+    
+    def readDatakeys(self, path):
+        paths = os.listdir(path)
+        ps = []
+        for p in paths:
+            ps.append(int(p.replace('.pkl', '')))
+        return ps
+    
     async def asynGetData(self, timeout: int)->None:
         self.userAgents = await readJson(self.pathUserAgents)
         self.proxies = await readProxies(self.pathProxies)

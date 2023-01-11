@@ -17,7 +17,7 @@ class Settings:
         self.pathQrys = './data/queries.pkl'
         self.pathCookies = './data/cookies.pkl'
         self.pathWgt = './data/widget.pkl'
-        self.pathDataIOT = './data/dataInterestOverTime.pkl'
+        self.pathDataIOT = './data/IOT/'
         self.pathWgtEptyRes = './data/widgetReceiveEmptyReponse.pkl'
         self.urls = {
             'token': 'https://trends.google.com/trends/api/explore',
