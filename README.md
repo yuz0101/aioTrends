@@ -24,8 +24,8 @@ Only data of interest over time is tested and avaiable now.
 * aiofiles
 + numpy
 
-## Setting
-Settings can be customized inside the `Settings` Class.
+## Files
+Settings can be customized by amending the settings.json under the foler settings.
 
 An example input of queries is given under the data folder.
 
