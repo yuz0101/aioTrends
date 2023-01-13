@@ -34,19 +34,41 @@ An example of proxies file is given under the proxies folder.
 The file userAgents.json is from [Said-Ait-Driss](https://github.com/Said-Ait-Driss/user-agents).
 
 ## Getting started
-### Fetch the timeseries data of your keywords
+### I. Initial stage
+1. Download the zip file.
+2. Amend the settings.json under the folder settings.
+3. Paste proxies to the proxies.txt under the folder proxies.
+4. Install requirements: run below command line on your terminal or cmd.
+
+```
+cd <the path where you unzip and store the files>
+pip install -r requirements.txt
+```
+
+### II. Setup a queries file
 
 ```python
 import pickle
-import aioTrends as at
 
-#Step 0: Setup the queries file and the log file. Other settings can be customized by amending the settings.json under the folder settings.
 queries = {
     0: {'keywords': ['AAPL'], 'periods': '2007-01-01 2007-08-31'},
     1: {'keywords': ['AMZN'], 'periods': 'all'},
     2: {'keywords': ['AAPL', 'AMZN'], 'periods': 'all'}
+    .
+    .
+    .
+    10000: {'keywords': ['MSFT'], 'periods': '2004-01-01 2022-12-31'}
     }
+
 pickle.dump(open('./data/queries.pkl', 'wb'))
+```
+
+### III. Fetch the timeseries data of your keywords
+
+```python
+import aioTrends as at
+
+#Step 0: Set the log file. Other settings can be customized by amending the settings.json under the folder settings.
 at.setLog('./data/hello.log')
 
 #Step 1: collect 1000 cookies with 100 cocurrent tasks. Cocurrent tasks amount can be customized.
