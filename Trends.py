@@ -16,7 +16,7 @@ import numpy as np
 
 from aioTrends.Settings import Settings
 
-TIMEOUT = 10
+TIMEOUT = 30
 LOCK = asyncio.Lock()
 
 if 'win' in sys.platform:
@@ -185,7 +185,7 @@ class WidgetsPool(Settings):
             async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
                 session.headers.update({'accept-language': self.hl, 'user-agent': userAgent})
                 async with session.get(
-                    self.urls['token'], params=payload, cookies=cookies, proxy=proxy#, timeout=timeout
+                    self.urls['token'], params=payload, cookies=cookies, proxy=proxy, timeout=timeout
                     ) as res:
                     if await self.status(f'|{i}|Widget Pool|TID:{tid}|Remained:{self.wgtQryN}', res):
                         res = await res.text()
@@ -284,7 +284,7 @@ class DataInterestOverTime(Settings):
             async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
                 session.headers.update({'accept-language': self.hl, 'user-agent': userAgent})
                 async with session.get(
-                    self.urls['multiline'], params=payload, proxy=proxy#, cookies=cookies, timeout=timeout
+                    self.urls['multiline'], params=payload, proxy=proxy, timeout=timeout #cookies=cookies,
                 ) as res:
                     if await self.status(f'|{i}|Data|Remained:{self.qryN}|TID:{tid}', res):
                         res = await res.text()
