@@ -1,0 +1,14 @@
+{
+    "hl": "en-US",
+    "geo": "US",
+    "tz": 360,
+    "cat": 0,
+    "gprop": "",
+    "pathUserAgents": "./settings/userAgents.json",
+    "pathProxies": "./proxies/proxies.txt",
+    "pathQrys": "./data/mQrys.pkl",
+    "pathCookies": "./data/cookies.pkl",
+    "pathWgt": "./data/widget.pkl",
+    "pathDataIOT": "./data/IOT/",
+    "pathWgtEptyRes": "./data/widgetReceiveEmptyReponse.pkl"
+}
