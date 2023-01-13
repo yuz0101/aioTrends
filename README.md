@@ -53,7 +53,7 @@ import pickle
 queries = {
     0: {'keywords': ['AAPL'], 'periods': '2007-01-01 2007-08-31'},
     1: {'keywords': ['AMZN'], 'periods': 'all'},
-    2: {'keywords': ['AAPL', 'AMZN'], 'periods': 'all'}
+    2: {'keywords': ['AAPL', 'AMZN'], 'periods': 'all'},
     .
     .
     .
