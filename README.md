@@ -40,15 +40,14 @@ The file userAgents.json is from [Said-Ait-Driss](https://github.com/Said-Ait-Dr
 import pickle
 import aioTrends as at
 
-#Step 0: Setup the queries file and the log file. Other settings can be customized by amending the init inside the Settings class
+#Step 0: Setup the queries file and the log file. Other settings can be customized by amending the settings.json under the folder settings.
 queries = {
     0: {'keywords': ['AAPL'], 'periods': '2007-01-01 2007-08-31'},
     1: {'keywords': ['AMZN'], 'periods': 'all'},
     2: {'keywords': ['AAPL', 'AMZN'], 'periods': 'all'}
     }
-
 pickle.dump(open('./data/queries.pkl', 'wb'))
-at.setLog('./data/hello.log') #Setp 0: set log file path
+at.setLog('./data/hello.log')
 
 #Step 1: collect 1000 cookies with 100 cocurrent tasks. Cocurrent tasks amount can be customized.
 at.CookeisPool(100).run(1000)

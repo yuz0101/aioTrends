@@ -25,6 +25,13 @@ if 'win' in sys.platform:
     #policy = asyncio.WindowsSelectorEventLoopPolicy()
     #asyncio.set_event_loop_policy(policy)
 
+def readDatakeys(path):
+    paths = os.listdir(path)
+    ps = []
+    for p in paths:
+        ps.append(int(p.replace('.pkl', '')))
+    return ps
+
 async def readJson(path: str):
     async with aiofiles.open(path, 'r') as f:
         s = await f.read()
@@ -313,7 +320,7 @@ class DataInterestOverTime(Settings):
         k = list(self.widgets.keys())
         try:
             #dkeys = await unpkl(self.pathDataIOT)
-            dkeys = self.readDatakeys(self.pathDataIOT)
+            dkeys = readDatakeys(self.pathDataIOT)
             k = list(set(k)-set(dkeys))
         except:
             pass
@@ -323,13 +330,6 @@ class DataInterestOverTime(Settings):
         except:
             pass
         return k
-    
-    def readDatakeys(self, path):
-        paths = os.listdir(path)
-        ps = []
-        for p in paths:
-            ps.append(int(p.replace('.pkl', '')))
-        return ps
     
     async def asynGetData(self, timeout: int)->None:
         self.userAgents = await readJson(self.pathUserAgents)

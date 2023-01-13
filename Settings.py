@@ -1,24 +1,27 @@
 # -*- coding: utf-8 -*-
 
+import json
 import logging
+
 from aiohttp import ClientResponse
 
+F = json.load(open('./settings/settings.json', 'r'))
 
 class Settings:
 
     def __init__(self):
-        self.hl = 'en-US'
-        self.geo = 'US'
-        self.tz = 360
-        self.cat = 0
-        self.gprop = ''
-        self.pathUserAgents = './settings/userAgents.json'
-        self.pathProxies = './proxies/proxies.txt'
-        self.pathQrys = './data/queries.pkl'
-        self.pathCookies = './data/cookies.pkl'
-        self.pathWgt = './data/widget.pkl'
-        self.pathDataIOT = './data/IOT/'
-        self.pathWgtEptyRes = './data/widgetReceiveEmptyReponse.pkl'
+        self.hl = F['hl']
+        self.geo = ['geo']
+        self.tz = F['tz']
+        self.cat = F['cat']
+        self.gprop = F['gprop']
+        self.pathUserAgents = F['pathUserAgents']
+        self.pathProxies = F['pathProxies']
+        self.pathQrys = F['pathQrys']
+        self.pathCookies = F['pathCookies']
+        self.pathWgt = F['pathWgt']
+        self.pathDataIOT = F['pathDataIOT']
+        self.pathWgtEptyRes = F['pathWgtEptyRes']
         self.urls = {
             'token': 'https://trends.google.com/trends/api/explore',
             'multiline': 'https://trends.google.com/trends/api/widgetdata/multiline'} #'comparedgeo': 'https://trends.google.com/trends/api/widgetdata/comparedgeo', #'relatedsearches': 'https://trends.google.com/trends/api/widgetdata/relatedsearches', #'trending': 'https://trends.google.com/trends/hottrends/visualize/internal/data'
