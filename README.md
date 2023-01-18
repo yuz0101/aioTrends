@@ -63,7 +63,7 @@ queries = {
 pickle.dump(open('./data/queries.pkl', 'wb'))
 ```
 
-### III. Fetch the timeseries data of your keywords
+### III. Create a py script named as example.py
 
 ```python
 import aioTrends as at
@@ -79,4 +79,10 @@ at.WidgetsPool(200).run()
 
 #Step 3: get data with 100 cocurrent tasks. Cocurrent tasks can be customized.
 at.DataInterestOverTime(100).run() 
+```
+
+### IV. Run the above example.py file on your terminal or cmd
+
+```
+python example.py
 ```

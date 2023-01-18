@@ -185,7 +185,7 @@ class WidgetsPool(Settings):
             async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
                 session.headers.update({'accept-language': self.hl, 'user-agent': userAgent})
                 async with session.get(
-                    self.urls['token'], params=payload, cookies=cookies, proxy=proxy, timeout=timeout
+                    self.urls['token'], params=payload, cookies=cookies, proxy=proxy
                     ) as res:
                     if await self.status(f'|{i}|Widget Pool|TID:{tid}|Remained:{self.wgtQryN}', res):
                         res = await res.text()

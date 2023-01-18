@@ -11,7 +11,7 @@ class Settings:
 
     def __init__(self):
         self.hl = F['hl']
-        self.geo = ['geo']
+        self.geo = F['geo']
         self.tz = F['tz']
         self.cat = F['cat']
         self.gprop = F['gprop']

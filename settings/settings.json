@@ -6,7 +6,7 @@
     "gprop": "",
     "pathUserAgents": "./settings/userAgents.json",
     "pathProxies": "./proxies/proxies.txt",
-    "pathQrys": "./data/mQrys.pkl",
+    "pathQrys": "./data/qrys.pkl",
     "pathCookies": "./data/cookies.pkl",
     "pathWgt": "./data/widget.pkl",
     "pathDataIOT": "./data/IOT/",
