@@ -4,7 +4,7 @@
 
 This is a project for asynchronously obtaining data from google trends in an efficient way. Inspired by [pytrends](https://github.com/GeneralMills/pytrends), I am developing this project based on a asynchronous framework, asyncio, and a related module, [aiohttp](https://github.com/aio-libs/aiohttp).
 
-The logic behind this project is to firstly build a cookies pool, then obtain and store the tokenized queries (wrapped inside the widgets) in another pool, and lastly retreive the data with widgets from the widget pool.s
+The logic behind this project is to firstly build a cookies pool, then obtain and store the tokenized queries (wrapped inside the widgets) in another pool, and lastly retreive the data with widgets from the widget pool.
 
 Only data of interest over time is tested and avaiable now.
 
