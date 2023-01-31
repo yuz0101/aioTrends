@@ -2,10 +2,40 @@
 
 import json
 import logging
+import os
 
-from aiohttp import ClientResponse
+from aiohttp import ClientResponse, ClientTimeout
 
-F = json.load(open('./settings/settings.json', 'r'))
+# Create folders
+for f in ['./data', './log', './proxies', './settings', './data/rawDaily', './data/rawMonthly', './data/scaledDaily', './data/IOT']:
+    if not os.path.exists(f):
+        os.mkdir(f)
+
+# Default settings.json
+if not os.path.exists('./settings/settings.json'):
+    with open('./settings/settings.json', 'w') as f:
+        F = {
+            "hl": "en-US",
+            "geo": "US",
+            "tz": 360,
+            "cat": 0,
+            "gprop": "",
+            "pathUserAgents": "./settings/userAgents.json",
+            "pathProxies": "./proxies/proxies.txt",
+            "pathQrys": "./data/qrys.pkl",
+            "pathCookies": "./data/cookies.pkl",
+            "pathWgt": "./data/widget.pkl",
+            "pathDataIOT": "./data/IOT/",
+            "pathRawDaily": "./data/rawDaily",
+            "pathRawMonthly": "./data/rawMonthly",
+            "pathScaledDaily": "./data/scaledDaily",
+            "pathWgtEptyRes": "./data/widgetReceiveEmptyReponse.pkl",
+            "timeout": 10
+        }
+        json.dump(F, f, indent=4)
+else:
+    F = json.load(open('./settings/settings.json', 'r'))
+
 
 class Settings:
 
@@ -21,7 +51,11 @@ class Settings:
         self.pathCookies = F['pathCookies']
         self.pathWgt = F['pathWgt']
         self.pathDataIOT = F['pathDataIOT']
+        self.pathRawDaily = F['pathRawDaily']
+        self.pathRawMonthly = F['pathRawMonthly']
+        self.pathScaledDaily = F['pathScaledDaily']
         self.pathWgtEptyRes = F['pathWgtEptyRes']
+        self.timeout = ClientTimeout(total=int(F['timeout']))
         self.urls = {
             'token': 'https://trends.google.com/trends/api/explore',
             'multiline': 'https://trends.google.com/trends/api/widgetdata/multiline'} #'comparedgeo': 'https://trends.google.com/trends/api/widgetdata/comparedgeo', #'relatedsearches': 'https://trends.google.com/trends/api/widgetdata/relatedsearches', #'trending': 'https://trends.google.com/trends/hottrends/visualize/internal/data'
@@ -89,3 +123,4 @@ def setLog(logPath: str):
     
     logger.addHandler(file_handler)
     logger.addHandler(stdout_handler)
+

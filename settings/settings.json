@@ -10,5 +10,8 @@
     "pathCookies": "./data/cookies.pkl",
     "pathWgt": "./data/widget.pkl",
     "pathDataIOT": "./data/IOT/",
+    "pathRawDaily": "./data/rawDaily",
+    "pathRawMonthly": "./data/rawMonthly",
+    "pathScaledDaily": "./data/scaledDaily",
     "pathWgtEptyRes": "./data/widgetReceiveEmptyReponse.pkl"
 }
