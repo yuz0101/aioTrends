@@ -71,9 +71,9 @@ cd path/to/your/working/path
 python
 import aioTrends as at
 ```
-7. Amend the settings.json under the folder settings.
-8. Paste proxies to the proxies.txt under the folder proxies.
-9. Get userAgents.json file from [Said-Ait-Driss](https://github.com/Said-Ait-Driss/user-agents) and past it under
+7. Amend the settings.json under the folder 'settings'.
+8. Paste proxies to the proxies.txt under the folder 'proxies'.
+9. Get userAgents.json file from [Said-Ait-Driss](https://github.com/Said-Ait-Driss/user-agents) and past it under the folder 'settings'
 
 ## Getting Started
 ### II. Setup a queries file
