@@ -22,7 +22,8 @@ Only data of interest over time is tested and avaiable now.
 - python >= 3.10
 * aiohttp
 * aiofiles
-+ numpy
+* numpy
++ pandas
 
 ## Files
 Settings can be customized by amending the settings.json under the foler settings.
@@ -33,34 +34,71 @@ An example of proxies file is given under the proxies folder.
 
 The file userAgents.json is from [Said-Ait-Driss](https://github.com/Said-Ait-Driss/user-agents).
 
-## Getting started
+## Before Start
 ### I. Initial stage
-1. Download the zip file.
-2. Amend the settings.json under the folder settings.
-3. Paste proxies to the proxies.txt under the folder proxies.
-4. Install requirements: run below command line on your terminal or cmd.
-
+1. Install [Python version at least 3.10](https://www.python.org/downloads/) if you don't have one, I use python 3.11 in this example
+2. Install package via pip command line. (On macOS's terminal or WindowsOS's CMD)
+```consol
+pip install aioTrends
+pip install virtualenv
 ```
-cd <the path where you unzip and store the files>
-pip install -r requirements.txt
+3. Create a virtual environment, named as atenv, for running python3.11 without affecting your other setups.
+```consol
+where python3.11
+```
+copy the path to python 3.11 and replace below path
+```consol
+virtualenv -p /path/to/python3.11 atenv
+```
+4. Activate the virtual environment
+On Windows:
+```consol
+atenv\Scripts\activate
+```
+On macOS and Linux:
+```consol
+source atenv/bin/activate
+```
+5. Install aioTrends********
+the package must be installed under the environment of python 3.10+  
+```consol
+pip install aioTrends
 ```
 
+6. Checking if installed properly. The programme will creat folders, please follow the instructions given by the programme.
+```consol
+cd path/to/your/working/path
+python
+import aioTrends as at
+```
+7. Amend the settings.json under the folder settings.
+8. Paste proxies to the proxies.txt under the folder proxies.
+9. Get userAgents.json file from [Said-Ait-Driss](https://github.com/Said-Ait-Driss/user-agents) and past it under
+
+## Getting Started
 ### II. Setup a queries file
 
 ```python
 import pickle
-
-queries = {
-    0: {'keywords': ['AAPL'], 'periods': '2007-01-01 2007-08-31'},
-    1: {'keywords': ['AMZN'], 'periods': 'all'},
-    2: {'keywords': ['AAPL', 'AMZN'], 'periods': 'all'},
+qrys = {
+    0: {'keywords': ['AAPL'], 'periods': '2007-01-01 2007-08-31', 'freq': 'D'},
+    1: {'keywords': ['AMZN'], 'periods': 'all', 'freq': 'M'},
+    2: {'keywords': ['AAPL', 'AMZN'], 'periods': 'all', 'freq': 'M'},
     .
     .
     .
-    10000: {'keywords': ['MSFT'], 'periods': '2004-01-01 2022-12-31'}
+    10000: {'keywords': ['MSFT'], 'periods': '2004-01-01 2022-12-31', 'freq': 'M'}
     }
 
-pickle.dump(open('./data/queries.pkl', 'wb'))
+pickle.dump(qrys, open('./data/qrys.pkl', 'wb'))
+```
+
+Alternatively, function ```formQueries``` would form the query dataset based on the list of keywords you give.
+```python
+from aioTrends import formQueries
+
+qrys = formQueries(keywords: ['AMZN', 'MSFN'], start='2004-01-01', end=date.today(), freq: str='D')
+pickle.dump(qrys, open('./data/qrys.pkl', 'wb'))
 ```
 
 ### III. Create a py script named as example.py
@@ -74,15 +112,35 @@ at.setLog('./data/hello.log')
 #Step 1: collect 1000 cookies with 100 cocurrent tasks. Cocurrent tasks amount can be customized.
 at.CookeisPool(100).run(1000)
 
-#Step 2: get widgets with 200 cocurrent tasks. Cocurrent tasks can be customized.
-at.WidgetsPool(200).run()
+#Step 2: get widgets with 100 cocurrent tasks. Cocurrent tasks can be customized.
+at.WidgetsPool(100).run()
 
 #Step 3: get data with 100 cocurrent tasks. Cocurrent tasks can be customized.
-at.DataInterestOverTime(100).run() 
+at.DataInterestOverTime(100).run()
 ```
 
-### IV. Run the above example.py file on your terminal or cmd
+Alternatively, you can use below one line for forming queries and getting daily scaled data.
+```python
 
+import aioTrends as at
+from datetime import date
+
+qry_list = ['AMZN', 'MSFN']
+
+# running 100 cocurrent tasks
+df = at.Aio(100).getScaledDailyData(
+    keywords=qry_list, # the query keyword list
+    filename='output.csv', # json and pickle are both supported
+    start='2004-01-01', # both datetime and str are supported
+    end=date.today()
+    )
+
+print(df)
 ```
+
+### IV. Run the above example.py file on your terminal or cmd (The code need to be running under the python 3.10+ environment)
+
+```consol
 python example.py
 ```
+
