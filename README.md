@@ -51,6 +51,7 @@ copy the path to python 3.11 and replace below path
 virtualenv -p /path/to/python3.11 atenv
 ```
 4. Activate the virtual environment
+
 On Windows:
 ```consol
 atenv\Scripts\activate
@@ -59,7 +60,8 @@ On macOS and Linux:
 ```consol
 source atenv/bin/activate
 ```
-5. Install aioTrends********
+5. Install aioTrends ********
+
 the package must be installed under the environment of python 3.10+  
 ```consol
 pip install aioTrends
@@ -73,7 +75,7 @@ import aioTrends as at
 ```
 7. Amend the settings.json under the folder 'settings'.
 8. Paste proxies to the proxies.txt under the folder 'proxies'.
-9. Get userAgents.json file from [Said-Ait-Driss](https://github.com/Said-Ait-Driss/user-agents) and past it under the folder 'settings'
+9. Get userAgents.json file from [Said-Ait-Driss](https://github.com/Said-Ait-Driss/user-agents) and past it under the folder 'settings'.
 
 ## Getting Started
 ### II. Setup a queries file
