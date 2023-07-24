@@ -119,7 +119,7 @@ at.WidgetsPool(100).run()
 at.DataInterestOverTime(100).run()
 ```
 
-Alternatively, you can use below one line for forming queries and getting daily scaled data.
+Alternatively, you can use below one line for forming queries and getting daily scaled data or monthly data.
 ```python
 
 import aioTrends as at
@@ -134,8 +134,10 @@ df = at.Aio(100).getScaledDailyData(
     start='2004-01-01', # both datetime and str are supported
     end=date.today()
     )
-
 print(df)
+
+df_m = at.Aio(50).getMonthlyData(keywords=qry_list, start='2004-01-01', end='2022-12-31')
+print(df_m)
 ```
 
 ### IV. Run the above example.py file on your terminal or cmd (The code need to be running under the python 3.10+ environment)
