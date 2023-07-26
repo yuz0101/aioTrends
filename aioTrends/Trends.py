@@ -440,7 +440,7 @@ class Aio(Settings):
         for key in _d.keys():
             _dm[key] = _d[key][0]
         _dm = DataFrame(_dm)
-        _dm.index = to_datetime(_dm, unit='s')
+        _dm.index = to_datetime(_dm.index, unit='s')
         return _dm
 
     def getScaledDailyData(self, keywords: list, filename: str, start: str or date or datetime='2004-01-01', end: str or date or datetime=date.today())->DataFrame:

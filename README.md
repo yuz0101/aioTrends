@@ -98,8 +98,10 @@ pickle.dump(qrys, open('./data/qrys.pkl', 'wb'))
 Alternatively, function ```formQueries``` would form the query dataset based on the list of keywords you give.
 ```python
 from aioTrends import formQueries
+from datetime import date
+import pickle
 
-qrys = formQueries(keywords: ['AMZN', 'MSFN'], start='2004-01-01', end=date.today(), freq: str='D')
+qrys = formQueries(keywords=['AMZN', 'MSFN'], start='2004-01-01', end=date.today(), freq='D')
 pickle.dump(qrys, open('./data/qrys.pkl', 'wb'))
 ```
 
