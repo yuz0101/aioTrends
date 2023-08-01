@@ -129,19 +129,26 @@ Alternatively, you can use below one line for forming queries and getting daily 
 import aioTrends as at
 from datetime import date
 
-qry_list = ['AMZN', 'MSFN']
+qry_list = ['AMZN', 'AAPL', 'MSFT']
 
-# running 100 cocurrent tasks
-df = at.Aio(100).getScaledDailyData(
+# running 50 cocurrent tasks
+df = at.Aio(50).getScaledDailyData(
     keywords=qry_list, # the query keyword list
-    filename='output.csv', # json and pickle are both supported
+    filename='test.csv', # json and pickle are both supported
     start='2004-01-01', # both datetime and str are supported
     end=date.today()
     )
-print(df)
 
-df_m = at.Aio(50).getMonthlyData(keywords=qry_list, start='2004-01-01', end='2022-12-31')
-print(df_m)
+fig = df.plot(figsize=(16,8), title='TEST_SCALED_DAILY_DATA').get_figure()
+fig.savefig('test_scaled_daily_data.png')
+
+df_m = at.Aio(50).getMonthlyData(
+    keywords=qry_list, 
+    start='2004-01-01', 
+    end='2022-12-31'
+    )
+fig = df_m.plot(figsize=(16,8), title='TEST_MONTHLY_DATA').get_figure()
+fig.savefig('test_monthly_data.png')
 ```
 
 ### IV. Run the above example.py file on your terminal or cmd (The code need to be running under the python 3.10+ environment)
@@ -150,3 +157,5 @@ print(df_m)
 python example.py
 ```
 
+![Monthly Data](test_monthly_data.png)
+![Scaled Daily Data](test_scaled_daily_data.png)

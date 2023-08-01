@@ -10,6 +10,32 @@ from aioTrends.HandleExceptions import InputError
 
 
 def _formQueries(tid: str, keyword: list, start='2004-01-01', end='2022-12-31', freq: str='D') -> dict:
+    '''The function `_formQueries` takes in a task ID, a list of keywords, a start date, an end date, and a
+    frequency, and returns a dictionary containing the task ID, keywords, periods, and frequency.
+    
+    Parameters
+    ----------
+    tid : str
+        The `tid` parameter is a string that represents the unique identifier for the query.
+    keyword : list
+        The `keyword` parameter is a list of keywords. It represents the keywords that you want to use for
+    querying data.
+    start, optional
+        The `start` parameter is the start date of the period for which you want to form queries. It is a
+    string representing a date in the format 'YYYY-MM-DD'. The default value is '2004-01-01'.
+    end, optional
+        The `end` parameter is a string representing the end date of the period for which the queries will
+    be formed. It has a default value of '2022-12-31'.
+    freq : str, optional
+        The `freq` parameter is a string that specifies the frequency of the data. It has a default value
+    of 'D', which stands for daily frequency. Other possible values for `freq` could be 'W' for weekly
+    frequency, 'M' for monthly frequency, 'Q' for quarterly frequency
+    
+    Returns
+    -------
+        a dictionary with the following structure:
+    
+    '''
     if type(start) == str:
         try:
             start = date.fromisoformat(start)
@@ -29,6 +55,25 @@ def _formQueries(tid: str, keyword: list, start='2004-01-01', end='2022-12-31', 
     return {tid: {'keywords': [keyword], 'periods': f'{start} {end}', 'freq': freq}}
 
 def _handlePeriods(start: date, end: date, freq: str) -> list:
+    '''The `_handlePeriods` function takes in a start date, end date, and frequency, and returns a list of
+    periods based on the given frequency.
+    
+    Parameters
+    ----------
+    start : date
+        The start date of the period. It should be a date object.
+    end : date
+        The `end` parameter represents the end date of the period for which you want to generate periods.
+    freq : str
+        The `freq` parameter is a string that represents the frequency of the periods. It can be either 'D'
+    for daily or 'M' for monthly frequency.
+    
+    Returns
+    -------
+        a list of periods. Each period is represented as a list containing two elements: the start date and
+    the end date.
+    
+    '''
     periods = []
     if freq.lower() == 'd':
         if (end - start).days > 3*30:
@@ -103,6 +148,21 @@ def formQueries(keywords: list, start='2004-01-01', end=date.today(), freq: str=
     return queries
 
 def collectRawData(path: str='./data/IOT/') -> dict:
+    '''The function `collectRawData` collects raw data from files in a specified directory and organizes it
+    into a dictionary based on keywords.
+    
+    Parameters
+    ----------
+    path : str, optional
+        The `path` parameter is a string that represents the directory path where the raw data files are
+    located. By default, it is set to `'./data/IOT/'`, which means that the function will look for the
+    raw data files in the `./data/IOT/` directory.
+    
+    Returns
+    -------
+        The function `collectRawData` returns a dictionary `dii` which contains the collected raw data.
+    
+    '''
     ps = os.listdir(path)
     dii = {}
     for p in ps:
@@ -119,10 +179,41 @@ def collectRawData(path: str='./data/IOT/') -> dict:
     return dii
 
 def delAllFiles(path):
+    '''The function `delAllFiles` deletes all files in a given directory.
+    
+    Parameters
+    ----------
+    path
+        The path parameter is the directory path where the files are located.
+    
+    '''
     for f in os.listdir(path):
         os.remove(os.path.join(path, f))
 
 def scaledDailyData(daily, monthly):
+    '''The function `scaledDailyData` takes in two dictionaries, `daily` and `monthly`, and returns a new
+    dictionary where the values in `daily` are scaled based on the corresponding values in `monthly`.
+    
+    Parameters
+    ----------
+    daily
+        The "daily" parameter is a dictionary where the keys are keywords and the values are lists of
+    dictionaries. Each dictionary in the list represents a daily sample and contains data for different
+    variables. The keys in each dictionary represent the variables and the values represent the
+    corresponding values for that variable on that day.
+    monthly
+        The "monthly" parameter is a dictionary that contains monthly data for each keyword. Each keyword
+    is a key in the dictionary, and the corresponding value is a list of dictionaries. Each dictionary
+    in the list represents a specific month, with the keys being the timestamps (in seconds) and the
+    values being the
+    
+    Returns
+    -------
+        a dictionary of scaled daily data. Each keyword in the input dictionary `daily` is used as a key in
+    the output dictionary `samples`. The corresponding value for each keyword is a dictionary of scaled
+    samples.
+    
+    '''
     samples = {}
     for keyword in list(daily.keys()):
         sample = {}
@@ -136,5 +227,3 @@ def scaledDailyData(daily, monthly):
             sample |= samp
         samples.update({keyword: sample})
     return samples
-
-
